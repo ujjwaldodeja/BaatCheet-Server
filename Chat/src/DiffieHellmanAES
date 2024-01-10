@@ -1,0 +1,51 @@
+import javax.crypto.*;
+import javax.crypto.spec.SecretKeySpec;
+import java.security.*;
+
+public class DiffieHellmanAES {
+
+    public static void main(String[] args) throws Exception {
+        // Step 1: Generate Diffie-Hellman parameters
+        KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("DH");
+        keyPairGenerator.initialize(2048); // Choose an appropriate key size
+        KeyPair keyPair = keyPairGenerator.generateKeyPair();
+
+        PublicKey publicKey = keyPair.getPublic();
+        PrivateKey privateKey = keyPair.getPrivate();
+
+        // Step 2: Share public keys between Alice and Bob
+        // Assume otherPartyPublicKey is the public key received from the other party
+
+        // Step 3: Generate shared secret using other party's public key
+        KeyAgreement keyAgreement = KeyAgreement.getInstance("DH");
+        keyAgreement.init(privateKey);
+        keyAgreement.doPhase(otherPartyPublicKey, true);
+
+        // Step 4: Generate AES key directly from the shared secret and truncate if necessary
+        SecretKey sharedSecret = keyAgreement.generateSecret();
+        byte[] aesKeyBytes = truncateOrPad(sharedSecret.getEncoded(), 32); // 32 bytes = 256 bits
+        SecretKey aesKey = new SecretKeySpec(aesKeyBytes, "AES");
+
+        // Step 5: Encrypt and decrypt using AES
+
+        // Encrypt
+        Cipher cipher = Cipher.getInstance("AES");
+        cipher.init(Cipher.ENCRYPT_MODE, aesKey);
+        byte[] encryptedText = cipher.doFinal("Hello, Bob!".getBytes());
+
+        // Decrypt
+        cipher.init(Cipher.DECRYPT_MODE, aesKey);
+        byte[] decryptedText = cipher.doFinal(encryptedText);
+
+        System.out.println("Original: " + new String("Hello, Bob!"));
+        System.out.println("Encrypted: " + Base64.getEncoder().encodeToString(encryptedText));
+        System.out.println("Decrypted: " + new String(decryptedText));
+    }
+
+    // Truncate or pad the byte array to the specified length
+    private static byte[] truncateOrPad(byte[] input, int length) {
+        byte[] output = new byte[length];
+        System.arraycopy(input, 0, output, 0, Math.min(input.length, length));
+        return output;
+    }
+}
