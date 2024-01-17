@@ -8,12 +8,9 @@ import java.util.Base64;
 import javax.crypto.KeyAgreement;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
-import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 public class DiffieHellmanKeyExchange {
-    static {
-        Security.addProvider(new BouncyCastleProvider());
-    }
+
     public static KeyPair generateKeyPair() throws NoSuchAlgorithmException {
         KeyPairGenerator keyPairGenerator = null;
         keyPairGenerator = KeyPairGenerator.getInstance("DH");

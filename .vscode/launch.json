@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "test",
+            "request": "launch",
+            "mainClass": "test",
+            "projectName": "Chat Server_60ff842a"
+        },
+        {
+            "type": "java",
             "name": "DiffieHellmanAES",
             "request": "launch",
             "mainClass": "DiffieHellmanAES",

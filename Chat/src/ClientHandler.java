@@ -148,6 +148,15 @@ public class ClientHandler implements Runnable {
                             System.out.println("Message sent:" +  command);
                     }
                     break;
+                    case "SEND_IMAGE": {
+                            String recipient = command[1];
+                            String sender = command[2];
+                            String image = command[3];
+                            String length = command[4];
+                            server.forwardMessage(recipient, "IMAGE~" + sender + "~" + image + "~" + length);;
+                            System.out.println("Message sent:" +  command);
+                    }
+                    break;
                     default: {
                         System.out.println("Not valid command." +
                                 "\n LIST - request a list of other clients" +
