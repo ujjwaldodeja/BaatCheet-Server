@@ -107,7 +107,7 @@ public class ClientHandler implements Runnable {
                             sendMessage("REGISTERED" + "~" + serverPublicKeyBase64);
                             System.out.println("CLIENT REGISTERED");
                         } else {
-                            sendMessage("USERNAME TAKEN");
+                            sendMessage("USERNAME_TAKEN");
                             System.out.println("fucked up");
                         }   
 
@@ -116,27 +116,19 @@ public class ClientHandler implements Runnable {
                         String username = command[1];
                         String password = command[2];
                         if (server.checkPassword(username, password)) {
-                            sendMessage("LOGGED_IN");
                             this.username = username;
+                            sendUpdatetoAllClients();
+                            sendMessage("LOGGED_IN");
                             //the queue will be used for saving clients that are online from now on
                             //server.addClientToQueue(this);  
                         } else {
                             sendMessage("INVALID_PASSWORD");
                         }
-                        
                     }
                     break;
                     case "LIST": {
                         System.out.println("processing");
-                        StringBuilder clients = new StringBuilder("LIST");
-                        Map<String, String> clientKeys = server.getPublicKeys();
-                        for (String user : server.getClients().keySet()) {
-                            if(!user.equals(this.getUsername())) {
-                                clients.append("~").append(user + "," + clientKeys.get(user));
-                            }
-                        }
-                        System.out.println(clients.toString());
-                        sendMessage(clients.toString());
+                        sendLists();
                     }
                     
                     break;
@@ -182,6 +174,28 @@ public class ClientHandler implements Runnable {
     //@ ensures !\result.equals(null) && \result == name;
     public synchronized String getUsername() {
         return username;
+    }
+
+    public void sendUpdatetoAllClients(){
+        String username = getUsername();
+        for (ClientHandler client : server.getClients().values()) {
+            if(!client.getUsername().equals(username)) {
+                String user_command = "NEW_USER~" + username + "," + server.getPublicKeys().get(username);
+                client.sendMessage(user_command); //add the username and key to the command
+            }
+        }
+    }
+
+    public void sendLists(){
+        StringBuilder clients = new StringBuilder("LIST");
+            Map<String, String> clientKeys = server.getPublicKeys();
+            for (String user : server.getClients().keySet()) {
+                    if(!user.equals(this.getUsername())) {
+                        clients.append("~").append(user + "," + clientKeys.get(user));
+                    }
+                }
+            System.out.println(clients.toString());
+            sendMessage(clients.toString());
     }
 
     /**
