@@ -112,6 +112,7 @@ public class ClientHandler implements Runnable {
                         }   
 
                     }
+                    break;
                     case "LOGIN": {
                         String username = command[1];
                         String password = command[2];
@@ -149,11 +150,24 @@ public class ClientHandler implements Runnable {
                             System.out.println("Message sent:" +  command);
                     }
                     break;
+                    case "SESSION_REQUEST": {
+                        String recipient = command[1];
+                        String sender = username;
+                        String key = command[2];
+                        server.forwardMessage(recipient, "SESSION_REQUEST~" + sender + "~" + key);
+                    }
+                    break;
+                    case "SESSION_ACCEPT": {
+                        String recipient = command[1];
+                        String sender = username;
+                        String key = command[2];
+                        server.forwardMessage(recipient, "SESSION_ACCEPT~" + sender + "~" + key);
+                    }
+                    break;
                     default: {
                         System.out.println("Not valid command." +
-                                "\n LIST - request a list of other clients" +
-                                "\n QUEUE - indicate that you want to participate in a game" +
-                                "\n MOVE~<location> - place a move to the wanted location");
+                                "\n LIST - request a list of other clients"
+                        );
                     }
                 }
             }
