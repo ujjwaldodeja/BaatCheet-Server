@@ -86,7 +86,7 @@ public class ClientHandler implements Runnable {
             while (!socket.isClosed()) {
                 try {
                     command = reader.readLine().split("~");
-                    System.out.println(Arrays.toString(command));
+                    // System.out.println(Arrays.toString(command));
 
                 } catch (SocketException e) {
                     System.out.println("Client " + username + " disconnected.");
@@ -110,7 +110,6 @@ public class ClientHandler implements Runnable {
                             sendMessage("USERNAME_TAKEN");
                             System.out.println("fucked up");
                         }   
-
                     }
                     break;
                     case "LOGIN": {
@@ -143,11 +142,13 @@ public class ClientHandler implements Runnable {
                     break;
                     case "SEND_IMAGE": {
                             String recipient = command[1];
-                            String sender = command[2];
-                            String image = command[3];
-                            String length = command[4];
+                            String sender = username;
+                            String image = command[2];
+                            String length = command[3];
+                            System.out.println(command[2]);
+                            
                             server.forwardMessage(recipient, "IMAGE~" + sender + "~" + image + "~" + length);;
-                            System.out.println("Message sent:" +  command);
+                            // System.out.println("Message sent:" +  command);
                     }
                     break;
                     case "SESSION_REQUEST": {
